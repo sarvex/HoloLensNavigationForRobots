@@ -68,7 +68,7 @@ class webSocket(WebSocketApplication):
         elif msg[self.msgType] == "quitApplication":
             self.quitApplication()
         else:
-            print("invalid message, msg = '%s'" + str(msg))
+            print(f"invalid message, msg = '%s'{str(msg)}")
 
     # -----------------------------------------------------------------------------
     #
@@ -104,48 +104,42 @@ class webSocket(WebSocketApplication):
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def close(self):
-        if (self.queue is not None):
-            msg = { self.msgType: "exit_handle_queue_messages" }
-            self.queue.put(msg)
+    def close(cls):
+        if cls.queue is not None:
+            msg = {cls.msgType: "exit_handle_queue_messages"}
+            cls.queue.put(msg)
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def setApplication(self, application):
-        self.application = application
+    def setApplication(cls, application):
+        cls.application = application
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def addClient(self, client):
-        msg = { 
-            self.msgType: self.eMsgType.addClient,
-            self.EMsgKey.client: client}
+    def addClient(cls, client):
+        msg = {cls.msgType: cls.eMsgType.addClient, cls.EMsgKey.client: client}
 
-        self.queue.put(msg)
+        cls.queue.put(msg)
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def removeClient(self, client):
-        msg = { 
-            self.msgType: self.eMsgType.removeClient,
-            self.EMsgKey.client: client}
+    def removeClient(cls, client):
+        msg = {cls.msgType: cls.eMsgType.removeClient, cls.EMsgKey.client: client}
 
-        self.queue.put(msg)
+        cls.queue.put(msg)
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def sendInitialization(self, ws):
-        if (self.application is None):
-            print("sendInitialization(): application object expected, client: " + str(id(ws)))
+    def sendInitialization(cls, ws):
+        if cls.application is None:
+            print(f"sendInitialization(): application object expected, client: {id(ws)}")
             return
 
-        status = {
-            self.msgType: "initialization"
-        }
+        status = {cls.msgType: "initialization"}
 
         #status["gestureInfo"] = self.application.getGestureInfo()
         #status["status"] = self.application.getStatus()
@@ -158,64 +152,70 @@ class webSocket(WebSocketApplication):
         try:
             ws.send(j)
         except:
-            print("sendInitialization() exception, client: " + str(id(ws)))
+            print(f"sendInitialization() exception, client: {id(ws)}")
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def queueMessage(self, msg):
-        self.queue.put(msg)
+    def queueMessage(cls, msg):
+        cls.queue.put(msg)
 
     # -----------------------------------------------------------------------------
     #
     def handleException(self, e, msg):
-        if (e.message):
-            print(msg + " " + e.message)
+        if e.message:
+            print(f"{msg} {e.message}")
         elif ((e.errno) and (e.errno == 2)):
-            print(msg + " '" + e.filename + "' - " + e.strerror)
+            print(f"{msg} '{e.filename}' - {e.strerror}")
         else:
-            print(msg + " " + e.strerror)
+            print(f"{msg} {e.strerror}")
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def sendMessage(self, msg):
+    def sendMessage(cls, msg):
         j = json.dumps(msg)
         ws = None
         try:
-            for client in self.clients:
+            for client in cls.clients:
                 ws = client.ws
                 ws.send(j)
         except Exception as e:
-            self.handleException(e, "application.sendMessage() exception, client: " + str(id(ws)))
+            cls.handleException(
+                e, f"application.sendMessage() exception, client: {id(ws)}"
+            )
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def CalibrateHoloLens(self):
+    def CalibrateHoloLens(cls):
         try:
-            if (self.application is not None):
-                self.application.CalibrateHoloLens()
+            if cls.application is not None:
+                cls.application.CalibrateHoloLens()
         except Exception as e:
-            self.handleException(e, "application.CalibrateHoloLens() exception, client: " + str(id(ws)))
+            cls.handleException(
+                e, f"application.CalibrateHoloLens() exception, client: {id(ws)}"
+            )
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def StartNode(self, name):
+    def StartNode(cls, name):
         try:
-            if (self.application is not None):
-                self.application.StartNode(name)
+            if cls.application is not None:
+                cls.application.StartNode(name)
         except Exception as e:
-            self.handleException(e, "application.StartNode() exception, client: " + str(id(ws)))
+            cls.handleException(e, f"application.StartNode() exception, client: {id(ws)}")
 
     # -----------------------------------------------------------------------------
     #
     @classmethod
-    def quitApplication(self):
+    def quitApplication(cls):
         try:
-            if (self.application is not None):
-                self.application.quitApplication()
+            if cls.application is not None:
+                cls.application.quitApplication()
         except Exception as e:
-            self.handleException(e, "application.quitApplication() exception, client: " + str(id(ws)))
+            cls.handleException(
+                e, f"application.quitApplication() exception, client: {id(ws)}"
+            )
 

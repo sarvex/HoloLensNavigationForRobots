@@ -42,7 +42,7 @@ class application:
     # -----------------------------------------------------------------------------
     #
     def __init__(self, port):
-        print('Hololens Navigation Dashboard. version ' + settings.appVersion + '\r\n')
+        print(f'Hololens Navigation Dashboard. version {settings.appVersion}' + '\r\n')
 
         self.context = "HoloNavDash"
         self.doneInitializingEvent = threading.Event()
@@ -80,7 +80,7 @@ class application:
 
         self.flask_app = Flask(__name__)
         self.flask_app.debug = False
-    
+
         @self.flask_app.route("/")
         def index():
            return render_template('index.html')
@@ -94,7 +94,7 @@ class application:
                 debug=False
                 )
 
-        print("Web Dashboard started on http://localhost:" + str(port) + ".")
+        print(f"Web Dashboard started on http://localhost:{str(port)}.")
 
         #
         # signal done initializing...
@@ -157,7 +157,7 @@ class application:
     def threadMonitorNodes(self, arg):
         ID = '/rosnode'
         master = rosgraph.Master(ID) # , master_uri=args.ROS_MASTER_URI)
-        print ("Using master at {}".format(master.getUri()))        
+        print(f"Using master at {master.getUri()}")        
 
         while self.fKeepRunning:
             pepper_robot = False
@@ -172,7 +172,7 @@ class application:
             for node in nodes:
                 if (node == "/pepper_robot"):
                     pepper_robot = True
-                elif (node == "/hololens_ros_bridge") or (node == "/hololens_ros_bridge_node"):
+                elif node in ["/hololens_ros_bridge", "/hololens_ros_bridge_node"]:
                     hololens_ros_bridge = True
                 elif (node == "/anchor_localizer"):
                     anchor_localizer = True
@@ -183,17 +183,17 @@ class application:
                 elif (node == "/localizer"):
                     localizer = True
 
-                # print ("-- " + node + " --")
+                        # print ("-- " + node + " --")
 
-                #node_api = rosnode.get_api_uri(master, node)
-                #if not node_api:
-                #    print("    API URI: error (unknown node: {}?)".format(node))
-                #    continue
-                # print ("    API URI: " + node_api)
+                        #node_api = rosnode.get_api_uri(master, node)
+                        #if not node_api:
+                        #    print("    API URI: error (unknown node: {}?)".format(node))
+                        #    continue
+                        # print ("    API URI: " + node_api)
 
-                # node = ServerProxy(node_api)
-                # pid = rosnode._succeed(node.getPid(ID))
-                # print ("    PID    : {}".format(pid))
+                        # node = ServerProxy(node_api)
+                        # pid = rosnode._succeed(node.getPid(ID))
+                        # print ("    PID    : {}".format(pid))
 
             self.hololens_ros_bridge = hololens_ros_bridge
 
@@ -256,7 +256,7 @@ class application:
         try:
             response = hololens_auto_calibration()
         except rospy.ServiceException as exc:
-            print("HololensAutoCalibration service did not process request: " + str(exc))
+            print(f"HololensAutoCalibration service did not process request: {str(exc)}")
 
 # -----------------------------------------------------------------------------
 #

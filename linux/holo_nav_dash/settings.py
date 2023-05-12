@@ -26,9 +26,9 @@ def initialize():
 
     # If we're in the "src" directory, use the parent directory as the base path
     # for files to make specifying paths a little easier for the user
-    if (cwd[-4:] == '\\src') or (cwd[-4:] == '/src'):
-        cwd = cwd[0:-4]
- 
+    if cwd[-4:] in ['\\src', '/src']:
+        cwd = cwd[:-4]
+
     numHttpServers = 0
     threadIOLoop = None
 
